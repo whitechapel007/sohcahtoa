@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { decodeToken } from '@/lib/auth-tokens';
-
-const ACCESS_COOKIE = 'dashboard.access_token';
+import { ACCESS_COOKIE } from '@/lib/auth-cookies';
 
 export async function GET(request: NextRequest) {
   const accessToken = request.cookies.get(ACCESS_COOKIE)?.value;

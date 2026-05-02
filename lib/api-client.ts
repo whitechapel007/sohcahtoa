@@ -3,6 +3,17 @@
 import axios, { type AxiosRequestConfig } from 'axios';
 import { refreshWithMutex } from '@/lib/refresh-mutex';
 
+export class ApiClientError extends Error {
+  code: string;
+  status: number;
+  constructor(message: string, code: string, status: number) {
+    super(message);
+    this.name = 'ApiClientError';
+    this.code = code;
+    this.status = status;
+  }
+}
+
 let controller = new AbortController();
 
 export function cancelAllRequests() {
@@ -59,18 +70,17 @@ function is401(err: unknown) {
   return axios.isAxiosError(err) && err.response?.status === 401;
 }
 
-function parseError(err: unknown) {
+function parseError(err: unknown): ApiClientError {
   if (axios.isAxiosError(err)) {
-    return {
-      message: err.response?.data?.message || err.message,
-      code: err.response?.data?.code || 'UNKNOWN',
-      status: err.response?.status || 0,
-    };
+    return new ApiClientError(
+      err.response?.data?.message || err.message,
+      err.response?.data?.code || 'UNKNOWN',
+      err.response?.status || 0,
+    );
   }
-
-  return {
-    message: err instanceof Error ? err.message : 'Unknown error',
-    code: 'UNKNOWN',
-    status: 0,
-  };
+  return new ApiClientError(
+    err instanceof Error ? err.message : 'Unknown error',
+    'UNKNOWN',
+    0,
+  );
 }

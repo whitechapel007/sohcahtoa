@@ -1,5 +1,6 @@
-import { headers } from 'next/headers';
-import type { Transaction, VirtualCard, BalanceSummary } from '@/types';
+import { getBalance } from '@/lib/dashboard/getBalance';
+import { getCards } from '@/lib/dashboard/getCards';
+import { getTransactions } from '@/lib/dashboard/getTransactions';
 import BalanceWidget from '@/components/dashboard/BalanceWidget';
 import FXActions from '@/components/dashboard/FXActions';
 import FXTransactionList from '@/components/dashboard/FXTransactionList';
@@ -7,25 +8,13 @@ import CardWidget from '@/components/dashboard/CardWidget';
 import CardTransactionList from '@/components/dashboard/CardTransactionList';
 import CardFlows from '@/components/dashboard/CardFlows';
 
-async function fetchFromApi<T>(path: string): Promise<T> {
-  const headersList = await headers();
-  const host = headersList.get('host') ?? 'localhost:3000';
-  const proto = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-  const res = await fetch(`${proto}://${host}${path}`, {
-    cache: 'no-store',
-    headers: { cookie: headersList.get('cookie') ?? '' },
-  });
-  if (!res.ok) throw new Error(`API error: ${path} → ${res.status}`);
-  return res.json() as Promise<T>;
-}
-
 export default async function DashboardPage() {
-  const [balance, fxTransactions, cardTransactions, cards] = await Promise.all([
-    fetchFromApi<BalanceSummary>('/api/dashboard/balance'),
-    fetchFromApi<Transaction[]>('/api/dashboard/transactions?limit=5'),
-    fetchFromApi<Transaction[]>('/api/dashboard/transactions?card=true&limit=5'),
-    fetchFromApi<VirtualCard[]>('/api/dashboard/cards'),
+  const [fxTransactions, cardTransactions, cards] = await Promise.all([
+    getTransactions({ limit: 5 }),
+    getTransactions({ limit: 5 }),
+    getCards(),
   ]);
+  const balance = getBalance();
 
   return (
     <div className="p-5 flex gap-5 min-h-full">

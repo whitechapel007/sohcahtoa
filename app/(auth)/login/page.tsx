@@ -1,118 +1,125 @@
-'use client';
+"use client";
 
-import { useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
+import Image from "next/image";
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError('');
+    setError(null);
+
+    // Grab all form values at once without 10 different useStates
+    const formData = new FormData(e.currentTarget);
+    const credentials = Object.fromEntries(formData);
 
     startTransition(async () => {
       try {
-        const res = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password }),
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(credentials),
         });
 
-        if (res.ok) {
-          const params = new URLSearchParams(window.location.search);
-          router.push(params.get('from') ?? '/dashboard');
-          router.refresh();
-        } else {
-          const data = await res.json();
-          setError(data.error ?? 'Login failed. Please try again.');
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || "Invalid credentials");
         }
-      } catch {
-        setError('Network error. Please try again.');
+
+        // Secure Redirect: Ensure it's an internal path
+        const from = searchParams.get("from") || "/dashboard";
+        const safeRedirect = from.startsWith("/") ? from : "/dashboard";
+
+        router.push(safeRedirect);
+        router.refresh();
+      } catch (err: any) {
+        setError(err.message);
       }
     });
   }
 
   return (
-    <div className="w-full max-w-md">
-      {/* Logo */}
-      <div className="flex items-center gap-3 mb-8 justify-center">
-        <div className="w-10 h-10 bg-brand-orange rounded-xl flex items-center justify-center">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-            <rect x="2" y="6" width="3" height="10" rx="1.5" fill="white" />
-            <rect x="7" y="3" width="3" height="16" rx="1.5" fill="white" />
-            <rect x="12" y="6" width="3" height="10" rx="1.5" fill="white" />
-            <rect x="17" y="8" width="3" height="6" rx="1.5" fill="white" />
-          </svg>
-        </div>
-        <div>
-          <p className="font-bold text-neutral-900 text-lg leading-tight">SohCahToa</p>
-          <p className="text-neutral-500 text-xs">Payout BDC</p>
+    <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Branding */}
+      <div className="flex flex-col items-center gap-4 mb-10">
+        <div className="">
+          <Image src={"logo.svg"} alt="" width={200} height={200} />
         </div>
       </div>
 
-      {/* Card */}
-      <div className="bg-panel rounded-2xl shadow-sm border border-neutral-100 p-8">
-        <h1 className="text-2xl font-bold text-neutral-900 mb-1">Welcome back</h1>
-        <p className="text-neutral-500 text-sm mb-6">Sign in to your dashboard</p>
-
-        {/* Demo hint */}
-        <div className="mb-5 px-4 py-3 bg-brand-orange-light rounded-xl text-xs text-brand-orange border border-brand-orange-muted space-y-0.5">
-          <p><strong>Admin:</strong> admin@sohcahtoa.com / admin123</p>
-          <p><strong>Analyst:</strong> analyst@sohcahtoa.com / analyst123</p>
+      <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-neutral-200/60 p-10 shadow-2xl shadow-neutral-200/50">
+        <div className="mb-8">
+          <h1 className="text-xl font-semibold text-neutral-900">
+            Welcome back
+          </h1>
+          <p className="text-neutral-500 text-sm">
+            Please enter your details to sign in.
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1.5">
-              Email address
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-wider text-neutral-500 ml-1">
+              Email Address
             </label>
             <input
+              name="email"
               type="email"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="w-full px-4 py-3 rounded-xl border border-neutral-200 text-sm text-neutral-900 placeholder:text-neutral-400 outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all"
+              placeholder="name@company.com"
+              className="w-full px-4 py-3.5 rounded-2xl border border-neutral-200 bg-neutral-50/50 text-sm transition-all focus:bg-white focus:ring-4 focus:ring-brand-orange/10 focus:border-brand-orange outline-none"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1.5">
-              Password
-            </label>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center ml-1">
+              <label className="text-xs font-bold uppercase tracking-wider text-neutral-500">
+                Password
+              </label>
+              <button
+                type="button"
+                className="text-xs font-semibold text-brand-orange hover:underline"
+              >
+                Forgot?
+              </button>
+            </div>
             <input
+              name="password"
               type="password"
               required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-4 py-3 rounded-xl border border-neutral-200 text-sm text-neutral-900 placeholder:text-neutral-400 outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all"
+              className="w-full px-4 py-3.5 rounded-2xl border border-neutral-200 bg-neutral-50/50 text-sm transition-all focus:bg-white focus:ring-4 focus:ring-brand-orange/10 focus:border-brand-orange outline-none"
             />
           </div>
 
           {error && (
-            <p className="text-sm text-negative bg-negative-bg px-3 py-2 rounded-lg">
+            <div className="p-3.5 rounded-2xl bg-red-50 border border-red-100 text-red-600 text-xs font-medium animate-shake">
               {error}
-            </p>
+            </div>
           )}
 
           <button
             type="submit"
             disabled={isPending}
-            className="mt-2 w-full py-3 px-4 bg-brand-orange hover:bg-brand-orange-hover active:scale-[0.98] text-white font-semibold rounded-xl text-sm transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+            className="relative w-full py-4 bg-neutral-900 text-white font-bold rounded-2xl text-sm transition-all hover:bg-neutral-800 active:scale-[0.99] disabled:opacity-70"
           >
-            {isPending ? 'Signing in…' : 'Sign in'}
+            {isPending ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Signing in...
+              </span>
+            ) : (
+              "Sign in to Dashboard"
+            )}
           </button>
         </form>
       </div>
-
-      <p className="text-center text-xs text-neutral-400 mt-6">
-        © {new Date().getFullYear()} SohCahToa Payout BDC. All rights reserved.
-      </p>
     </div>
   );
 }

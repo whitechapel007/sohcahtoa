@@ -1,65 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { decodeToken, isTokenExpired, createTokens } from '@/lib/auth-tokens';
-import { findUserByEmail } from '@/data/mock/user';
+import { decodeToken, createTokens } from '@/lib/auth-tokens';
+import { ACCESS_COOKIE, REFRESH_COOKIE } from '@/lib/auth-cookies';
 
-const ACCESS_COOKIE  = 'dashboard.access_token';
-const REFRESH_COOKIE = 'dashboard.refresh_token';
-const EXPIRES_COOKIE = 'dashboard.session_expires';
-
-const PUBLIC_PATHS = ['/login', '/api/auth/login', '/api/auth/logout', '/api/auth/refresh'];
-
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
-    if (pathname.startsWith('/login')) {
-      const token = request.cookies.get(ACCESS_COOKIE)?.value;
-      if (token && !isTokenExpired(token)) {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
-      }
-    }
-    return NextResponse.next();
-  }
-
-  const needsAuth = pathname.startsWith('/dashboard') || pathname.startsWith('/api/dashboard');
-  if (!needsAuth) return NextResponse.next();
+  // 1. Define Public Paths
+  const isPublic = pathname.startsWith('/login') || pathname.startsWith('/api/auth');
+  if (isPublic) return NextResponse.next();
 
   const accessToken = request.cookies.get(ACCESS_COOKIE)?.value;
+  const refreshToken = request.cookies.get(REFRESH_COOKIE)?.value;
 
-  if (!accessToken) {
-    const refreshToken = request.cookies.get(REFRESH_COOKIE)?.value;
-    if (refreshToken && !isTokenExpired(refreshToken)) {
-      return inlineRefresh(request, refreshToken);
-    }
+  // 2. The "Hard" Redirect: No tokens at all
+  if (!accessToken && !refreshToken) {
     return redirectToLogin(request, 'unauthenticated');
   }
 
-  const payload = decodeToken(accessToken);
-  if (!payload) return redirectToLogin(request, 'invalid_token');
-
-  if (Date.now() > payload.exp) {
-    const refreshToken = request.cookies.get(REFRESH_COOKIE)?.value;
-    if (refreshToken && !isTokenExpired(refreshToken)) {
-      return inlineRefresh(request, refreshToken);
-    }
-    return clearAndRedirect(request, 'expired');
+  // 3. The "Silent Repair": Access is gone, but we have a Refresh Token
+  if (!accessToken && refreshToken) {
+    return handleInlineRefresh(request, refreshToken);
   }
 
   return NextResponse.next();
 }
 
-function inlineRefresh(request: NextRequest, refreshToken: string): NextResponse {
+/**
+ * Handles the "Silent Refresh" logic directly in the Request/Response lifecycle.
+ */
+function handleInlineRefresh(request: NextRequest, refreshToken: string) {
   const payload = decodeToken(refreshToken);
-  if (!payload || payload.type !== 'refresh') {
-    return clearAndRedirect(request, 'invalid_refresh');
+
+  if (payload?.type !== 'refresh' || Date.now() > payload.exp) {
+    return redirectToLogin(request, 'session_expired');
   }
 
-  // Re-lookup user so role changes take effect without a forced re-login
-  findUserByEmail(payload.sub);
-
   const tokens = createTokens(payload.sub, payload.role, payload.name);
-  const expiresAt = Date.now() + tokens.expiresIn;
-  const response = NextResponse.next();
 
   const base = {
     httpOnly: true,
@@ -68,34 +44,29 @@ function inlineRefresh(request: NextRequest, refreshToken: string): NextResponse
     path: '/',
   };
 
-  response.cookies.set(ACCESS_COOKIE, tokens.accessToken, { ...base, maxAge: tokens.expiresIn / 1000 });
+  /**
+   * CRITICAL STEP: Forward the new access token to downstream Server Components.
+   * Middleware sets cookies on the *response*, but Server Components read from
+   * the *request*. We sync by cloning request headers with the Authorization value.
+   */
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('Authorization', `Bearer ${tokens.accessToken}`);
+
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
+
+  response.cookies.set(ACCESS_COOKIE,  tokens.accessToken,  { ...base, maxAge: tokens.expiresIn / 1000 });
   response.cookies.set(REFRESH_COOKIE, tokens.refreshToken, { ...base, maxAge: 7 * 24 * 60 * 60 });
-  response.cookies.set(EXPIRES_COOKIE, String(expiresAt), {
-    httpOnly: false,
-    secure: base.secure,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: tokens.expiresIn / 1000,
-  });
 
   return response;
 }
 
 function redirectToLogin(request: NextRequest, reason: string) {
   const url = new URL('/login', request.url);
-  url.searchParams.set('from', request.nextUrl.pathname);
   url.searchParams.set('reason', reason);
+  url.searchParams.set('from', request.nextUrl.pathname);
   return NextResponse.redirect(url);
 }
 
-function clearAndRedirect(request: NextRequest, reason: string) {
-  const response = redirectToLogin(request, reason);
-  response.cookies.delete(ACCESS_COOKIE);
-  response.cookies.delete(REFRESH_COOKIE);
-  response.cookies.delete(EXPIRES_COOKIE);
-  return response;
-}
-
 export const config = {
-  matcher: [String.raw`/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)`],
+  matcher: ['/((?!_next|favicon.ico|.*\\.(svg|png|jpg|jpeg|gif|webp)$).*)'],
 };

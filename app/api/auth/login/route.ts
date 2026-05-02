@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createTokens } from '@/lib/auth-tokens';
+import { ACCESS_COOKIE, REFRESH_COOKIE } from '@/lib/auth-cookies';
 import { findUserByEmail, DEMO_CREDENTIALS } from '@/data/mock/user';
-
-const ACCESS_COOKIE  = 'dashboard.access_token';
-const REFRESH_COOKIE = 'dashboard.refresh_token';
-const EXPIRES_COOKIE = 'dashboard.session_expires';
 
 export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null);
@@ -21,7 +18,6 @@ export async function POST(request: NextRequest) {
   }
 
   const tokens = createTokens(user.id, user.role, user.name);
-  const expiresAt = Date.now() + tokens.expiresIn;
 
   const base = {
     httpOnly: true,
@@ -31,21 +27,11 @@ export async function POST(request: NextRequest) {
   };
 
   const response = NextResponse.json({
-    accessToken: tokens.accessToken,
-    refreshToken: tokens.refreshToken,
-    expiresIn: tokens.expiresIn,
     user: { id: user.id, role: user.role, name: user.name, email: user.email },
   });
 
   response.cookies.set(ACCESS_COOKIE,  tokens.accessToken,  { ...base, maxAge: tokens.expiresIn / 1000 });
   response.cookies.set(REFRESH_COOKIE, tokens.refreshToken, { ...base, maxAge: 7 * 24 * 60 * 60 });
-  response.cookies.set(EXPIRES_COOKIE, String(expiresAt), {
-    httpOnly: false,
-    secure: base.secure,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: tokens.expiresIn / 1000,
-  });
 
   return response;
 }
