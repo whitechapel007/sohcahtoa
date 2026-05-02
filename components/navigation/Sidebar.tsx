@@ -107,11 +107,11 @@ export default function Sidebar({ userName, userEmail }: SidebarProps) {
             >
               <div
                 className={`
-                  w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all
-                  ${isActive ? 'bg-brand-orange text-white' : 'text-neutral-400 group-hover:text-neutral-600'}
+                  flex items-center justify-center shrink-0 transition-all
+                  ${isActive ? 'text-brand-orange' : 'text-neutral-400 group-hover:text-neutral-600'}
                 `}
               >
-                <Icon size={16} />
+                <Icon size={18} />
               </div>
 
               {!collapsed && (

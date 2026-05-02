@@ -66,7 +66,7 @@ export default function TransactionListItem({ transaction }: TransactionListItem
       <span
         className={`
           text-sm font-semibold shrink-0
-          ${transaction.amount >= 0 ? 'text-positive' : 'text-negative'}
+          ${transaction.amount >= 0 ? 'text-positive' : 'text-neutral-800'}
         `}
       >
         {formatAmount(transaction.amount, transaction.currency)}

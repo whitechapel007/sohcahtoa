@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { decodeToken } from '@/lib/auth-tokens';
+import { ACCESS_COOKIE } from '@/lib/auth-cookies';
 import { getTransactionById } from '@/data/mock/transactions';
 
 export const dynamic = 'force-dynamic';
-
-const ACCESS_COOKIE = 'dashboard.access_token';
 
 export async function GET(
   request: NextRequest,

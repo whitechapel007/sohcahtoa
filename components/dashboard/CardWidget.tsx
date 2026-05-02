@@ -5,15 +5,16 @@ interface CardWidgetProps {
   cards: VirtualCard[];
 }
 
-function VirtualCardDisplay({ card }: { card: VirtualCard }) {
-  const balanceParts = card.balance.toLocaleString('en-US', {
+export function VirtualCardDisplay({ card, selected }: { card: VirtualCard; selected?: boolean }) {
+  const formatted = card.balance.toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
+  const [balanceWhole, balanceCents] = formatted.split('.');
 
   return (
     <div
-      className="relative rounded-2xl overflow-hidden text-white select-none"
+      className={`relative rounded-2xl overflow-hidden text-white select-none transition-shadow ${selected ? 'ring-2 ring-offset-2 ring-brand-orange' : ''}`}
       style={{
         background: 'linear-gradient(135deg, #7C2800 0%, #C44010 35%, #E07030 70%, #F09050 100%)',
         aspectRatio: '1.586 / 1',
@@ -58,8 +59,8 @@ function VirtualCardDisplay({ card }: { card: VirtualCard }) {
           <div className="flex items-end justify-between">
             <div>
               <p className="text-lg font-bold leading-tight">
-                ${balanceParts}
-                <span className="text-xs font-normal text-white/70 ml-0.5">00</span>
+                ${balanceWhole}
+                <span className="text-xs font-normal text-white/70">.{balanceCents}</span>
               </p>
               <p className="text-[10px] text-white/60 mt-0.5">
                 VALID THRU {card.validThru}
@@ -94,14 +95,17 @@ function AddCardPlaceholder() {
 }
 
 export default function CardWidget({ cards }: CardWidgetProps) {
+  const primary = cards[0];
   return (
     <div>
       <h2 className="text-sm font-semibold text-neutral-800 mb-4">Cards</h2>
-      <div className="grid grid-cols-2 gap-3">
-        {cards.map((card) => (
-          <VirtualCardDisplay key={card.id} card={card} />
-        ))}
-        <AddCardPlaceholder />
+      <div className="flex gap-3 items-start">
+        <div className="flex-1 min-w-0">
+          {primary && <VirtualCardDisplay card={primary} />}
+        </div>
+        <div className="w-22 shrink-0">
+          <AddCardPlaceholder />
+        </div>
       </div>
     </div>
   );

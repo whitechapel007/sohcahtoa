@@ -16,8 +16,8 @@ function getGreeting() {
 
 function getGreetingEmoji() {
   const hour = new Date().getHours();
-  if (hour < 12) return '🌤';
-  if (hour < 17) return '☀️';
+  if (hour < 12) return '☀️';
+  if (hour < 17) return '🌤';
   return '🌙';
 }
 

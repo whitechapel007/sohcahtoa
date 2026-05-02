@@ -1,9 +1,8 @@
 import { cookies, headers } from 'next/headers';
 import { decodeToken } from '@/lib/auth-tokens';
+import { ACCESS_COOKIE } from '@/lib/auth-cookies';
 import type { PaginatedTransactions, UserRole } from '@/types';
 import TransactionsTable from '@/components/dashboard/TransactionsTable';
-
-const ACCESS_COOKIE = 'dashboard.access_token';
 
 async function fetchInitialTransactions(cookieHeader: string, host: string): Promise<PaginatedTransactions> {
   const proto = process.env.NODE_ENV === 'production' ? 'https' : 'http';

@@ -17,7 +17,7 @@ export default function CardFlows({ balance }: CardFlowsProps) {
   const outPercent = total > 0 ? (balance.moneyOut / total) * 100 : 0;
 
   const netAmount = balance.moneyIn - balance.moneyOut;
-  const netFormatted = `${netAmount >= 0 ? '+' : '-'}$${formatAmount(Math.abs(netAmount))}`;
+  const [netWhole, netCents] = formatAmount(Math.abs(netAmount)).split('.');
 
   return (
     <div>
@@ -27,8 +27,8 @@ export default function CardFlows({ balance }: CardFlowsProps) {
         <span
           className={`text-sm font-bold ${netAmount >= 0 ? 'text-positive' : 'text-negative'}`}
         >
-          {netFormatted}
-          <span className="text-[10px] font-normal text-neutral-400 ml-0.5">00</span>
+          {netAmount >= 0 ? '+' : '-'}${netWhole}
+          <span className="text-[10px] font-normal text-neutral-400">.{netCents}</span>
         </span>
       </div>
 

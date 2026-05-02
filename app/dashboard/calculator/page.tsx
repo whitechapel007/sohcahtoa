@@ -26,7 +26,7 @@ export default function CalculatorPage() {
         <h1 className="text-xl font-bold text-neutral-900 mb-1">FX Calculator</h1>
         <p className="text-sm text-neutral-500 mb-6">Get indicative rates for your FX conversions.</p>
 
-        <div className="bg-panel rounded-2xl p-6 flex flex-col gap-5">
+        <div className="bg-panel rounded-2xl p-6 flex flex-col gap-5 shadow-sm">
           {/* From */}
           <div>
             <label className="block text-sm font-medium text-neutral-700 mb-1.5">You send</label>

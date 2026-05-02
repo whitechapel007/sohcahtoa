@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { decodeToken } from '@/lib/auth-tokens';
+import { ACCESS_COOKIE } from '@/lib/auth-cookies';
 import { TRANSACTIONS } from '@/data/mock/transactions';
 import type { Transaction, TransactionStatus, SortField, SortOrder, PaginatedTransactions } from '@/types';
 
 export const dynamic = 'force-dynamic';
-
-const ACCESS_COOKIE = 'dashboard.access_token';
 const DEFAULT_LIMIT = 8;
 const MAX_LIMIT = 50;
 const VALID_STATUSES = new Set<TransactionStatus>(['pending', 'completed', 'flagged', 'failed']);

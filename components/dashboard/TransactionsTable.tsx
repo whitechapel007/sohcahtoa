@@ -184,7 +184,7 @@ export default function TransactionsTable({ initialData, userRole }: Props) {
         All your FX and payment activity in one place.
       </p>
 
-      <div className="bg-panel rounded-2xl p-4 mb-4 space-y-3">
+      <div className="bg-panel rounded-2xl p-4 mb-4 space-y-3 shadow-sm">
         <div className="flex gap-3 flex-wrap">
           {/* Search */}
           <div className="relative flex-1 min-w-48">
@@ -251,7 +251,7 @@ export default function TransactionsTable({ initialData, userRole }: Props) {
         </div>
       </div>
 
-      <div className="bg-panel rounded-2xl overflow-hidden">
+      <div className="bg-panel rounded-2xl overflow-hidden shadow-sm">
         {/* Column headers */}
         <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-4 px-6 py-3 border-b border-neutral-100 text-xs font-semibold text-neutral-500 uppercase tracking-wide">
           <span>Description</span>
@@ -308,7 +308,7 @@ export default function TransactionsTable({ initialData, userRole }: Props) {
               </span>
               <span
                 className={`text-sm font-semibold ${
-                  tx.amount >= 0 ? 'text-positive' : 'text-negative'
+                  tx.amount >= 0 ? 'text-positive' : 'text-neutral-800'
                 }`}
               >
                 {fmtAmount(tx.amount)}

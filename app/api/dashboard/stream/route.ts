@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { decodeToken } from '@/lib/auth-tokens';
+import { ACCESS_COOKIE } from '@/lib/auth-cookies';
 import type { Transaction } from '@/types';
 
 export const dynamic = 'force-dynamic';
-
-const ACCESS_COOKIE = 'dashboard.access_token';
-const INTERVAL_MS = 9_000;
+const INTERVAL_MS = 5_000;
 
 const DESCRIPTIONS = [
   'Inbound wire — Adaeze Obi',

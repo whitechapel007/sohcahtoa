@@ -1,10 +1,9 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { decodeToken } from '@/lib/auth-tokens';
+import { ACCESS_COOKIE } from '@/lib/auth-cookies';
 import Sidebar from '@/components/navigation/Sidebar';
 import TopNav from '@/components/navigation/TopNav';
-
-const ACCESS_COOKIE = 'dashboard.access_token';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies();

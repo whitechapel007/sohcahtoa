@@ -32,8 +32,8 @@ export default function BalanceWidget({ balance }: BalanceWidgetProps) {
               className={`
                 px-3.5 py-1.5 rounded-full text-sm font-medium transition-all
                 ${activeFilter === tab
-                  ? 'bg-brand-orange-light text-brand-orange border border-brand-orange-muted'
-                  : 'text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100'
+                  ? 'border border-brand-orange text-brand-orange bg-white'
+                  : 'border border-neutral-200 text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
                 }
               `}
             >
@@ -64,14 +64,17 @@ export default function BalanceWidget({ balance }: BalanceWidgetProps) {
         </div>
 
         {hidden ? (
-          <div className="flex items-baseline gap-1">
-            <span className="text-3xl font-bold text-neutral-900">$ ••••••••</span>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-neutral-900 text-white text-sm font-bold shrink-0">$</span>
+            <span className="text-4xl font-bold text-neutral-900 tracking-tight">••••••••</span>
           </div>
         ) : (
-          <div className="flex items-baseline gap-0.5">
-            <span className="text-xl font-bold text-neutral-700 mr-1">$</span>
-            <span className="text-4xl font-bold text-neutral-900 tracking-tight">{dollars}</span>
-            <span className="text-xl font-bold text-neutral-400">.{cents}</span>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-neutral-900 text-white text-sm font-bold shrink-0">$</span>
+            <div className="flex items-baseline gap-0">
+              <span className="text-4xl font-bold text-neutral-900 tracking-tight">{dollars}</span>
+              <span className="text-2xl font-bold text-neutral-400">.{cents}</span>
+            </div>
           </div>
         )}
       </div>

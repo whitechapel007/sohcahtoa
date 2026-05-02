@@ -19,7 +19,7 @@ export default async function DashboardPage() {
   return (
     <div className="p-5 flex gap-5 min-h-full">
       {/* ── Left / FX panel ── */}
-      <div className="flex-1 min-w-0 bg-panel rounded-2xl p-6 flex flex-col gap-6 self-start">
+      <div className="flex-1 min-w-0 bg-panel rounded-2xl p-6 flex flex-col gap-6 self-start shadow-sm">
         <BalanceWidget balance={balance} />
         <FXActions />
         <div className="border-t border-neutral-100" />
@@ -27,7 +27,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Right / Cards panel ── */}
-      <div className="w-[310px] shrink-0 bg-panel rounded-2xl p-6 flex flex-col gap-6 self-start">
+      <div className="w-[380px] shrink-0 bg-panel rounded-2xl p-6 flex flex-col gap-6 self-start shadow-sm">
         <CardWidget cards={cards} />
         <div className="border-t border-neutral-100" />
         <CardTransactionList transactions={cardTransactions} />

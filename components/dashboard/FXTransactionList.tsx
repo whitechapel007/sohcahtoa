@@ -6,7 +6,7 @@ import type { Transaction, TransactionCategory } from '@/types';
 import TransactionListItem from './TransactionListItem';
 
 interface FXTransactionListProps {
-  transactions: Transaction[];
+  readonly transactions: Transaction[];
 }
 
 const TABS: (TransactionCategory | 'All')[] = ['All', 'FX', 'PTA', 'BTA', 'Medicals'];
@@ -26,7 +26,7 @@ export default function FXTransactionList({ transactions }: FXTransactionListPro
         <h2 className="text-sm font-semibold text-neutral-800">FX transactions</h2>
         <Link
           href="/dashboard/transactions"
-          className="text-xs font-medium text-neutral-500 border border-neutral-200 px-3 py-1.5 rounded-lg hover:text-brand-orange hover:border-brand-orange transition-all"
+          className="text-xs font-medium text-neutral-500 border border-neutral-200 px-3 py-1.5 rounded-full hover:text-brand-orange hover:border-brand-orange transition-all"
         >
           See all
         </Link>
@@ -41,8 +41,8 @@ export default function FXTransactionList({ transactions }: FXTransactionListPro
             className={`
               px-3 py-1.5 rounded-full text-xs font-medium transition-all
               ${activeTab === tab
-                ? 'bg-brand-orange-light text-brand-orange border border-brand-orange-muted'
-                : 'text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700'
+                ? 'border border-brand-orange text-brand-orange bg-white'
+                : 'border border-neutral-200 text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
               }
             `}
           >

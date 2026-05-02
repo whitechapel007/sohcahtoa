@@ -15,7 +15,7 @@ export default function CardTransactionList({ transactions }: CardTransactionLis
         <h2 className="text-sm font-semibold text-neutral-800">Card transactions</h2>
         <Link
           href="/dashboard/cards"
-          className="text-xs font-medium text-neutral-500 border border-neutral-200 px-3 py-1.5 rounded-lg hover:text-brand-orange hover:border-brand-orange transition-all"
+          className="text-xs font-medium text-neutral-500 border border-neutral-200 px-3 py-1.5 rounded-full hover:text-brand-orange hover:border-brand-orange transition-all"
         >
           See all
         </Link>
