@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-orange: #E55C1B;
+  --color-brand-orange-hover: #CC4E10;
+  --color-brand-orange-light: #FEF0E8;
+  --color-brand-orange-muted: #FBD9C5;
+
+  --color-positive: #16A34A;
+  --color-positive-bg: #DCFCE7;
+  --color-negative: #DC2626;
+  --color-negative-bg: #FEE2E2;
+
+  --color-page-bg: #F4F6F9;
+  --color-sidebar-bg: #FFFFFF;
+  --color-panel: #FFFFFF;
+
+  --color-neutral-50: #F9FAFB;
+  --color-neutral-100: #F3F4F6;
+  --color-neutral-200: #E5E7EB;
+  --color-neutral-300: #D1D5DB;
+  --color-neutral-400: #9CA3AF;
+  --color-neutral-500: #6B7280;
+  --color-neutral-600: #4B5563;
+  --color-neutral-700: #374151;
+  --color-neutral-800: #1F2937;
+  --color-neutral-900: #111827;
+
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--color-page-bg);
+  color: var(--color-neutral-900);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Card shine overlay */
+.card-shine {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    transparent 60%
+  );
+}
