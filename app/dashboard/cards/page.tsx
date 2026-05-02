@@ -1,7 +1,7 @@
 import { headers } from 'next/headers';
 import type { VirtualCard, Transaction } from '@/types';
-import CardWidget from '@/app/components/dashboard/CardWidget';
-import TransactionListItem from '@/app/components/dashboard/TransactionListItem';
+import CardWidget from '@/components/dashboard/CardWidget';
+import TransactionListItem from '@/components/dashboard/TransactionListItem';
 
 async function fetchFromApi<T>(path: string): Promise<T> {
   const headersList = await headers();

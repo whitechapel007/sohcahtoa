@@ -1,6 +1,6 @@
 'use client';
 
-import { SearchIcon, BellIcon } from '@/app/components/core/Icons';
+import { SearchIcon, BellIcon } from '@/components/core/Icons';
 
 interface TopNavProps {
   userName: string;

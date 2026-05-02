@@ -1,5 +1,5 @@
 import type { VirtualCard } from '@/types';
-import { ChipIcon, VisaLogoIcon, PlusIcon } from '@/app/components/core/Icons';
+import { ChipIcon, VisaLogoIcon, PlusIcon } from '@/components/core/Icons';
 
 interface CardWidgetProps {
   cards: VirtualCard[];

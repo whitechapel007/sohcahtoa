@@ -1,11 +1,11 @@
 import { headers } from 'next/headers';
 import type { Transaction, VirtualCard, BalanceSummary } from '@/types';
-import BalanceWidget from '@/app/components/dashboard/BalanceWidget';
-import FXActions from '@/app/components/dashboard/FXActions';
-import FXTransactionList from '@/app/components/dashboard/FXTransactionList';
-import CardWidget from '@/app/components/dashboard/CardWidget';
-import CardTransactionList from '@/app/components/dashboard/CardTransactionList';
-import CardFlows from '@/app/components/dashboard/CardFlows';
+import BalanceWidget from '@/components/dashboard/BalanceWidget';
+import FXActions from '@/components/dashboard/FXActions';
+import FXTransactionList from '@/components/dashboard/FXTransactionList';
+import CardWidget from '@/components/dashboard/CardWidget';
+import CardTransactionList from '@/components/dashboard/CardTransactionList';
+import CardFlows from '@/components/dashboard/CardFlows';
 
 async function fetchFromApi<T>(path: string): Promise<T> {
   const headersList = await headers();

@@ -13,7 +13,7 @@ import {
   ChevronRightIcon,
   ChevronLeftIcon,
   LogoutIcon,
-} from '@/app/components/core/Icons';
+} from '@/components/core/Icons';
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Home', icon: HomeIcon },

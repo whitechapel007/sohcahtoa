@@ -1,7 +1,7 @@
 import { cookies, headers } from 'next/headers';
 import { decodeToken } from '@/lib/auth-tokens';
 import type { PaginatedTransactions, UserRole } from '@/types';
-import TransactionsTable from '@/app/components/dashboard/TransactionsTable';
+import TransactionsTable from '@/components/dashboard/TransactionsTable';
 
 const ACCESS_COOKIE = 'dashboard.access_token';
 

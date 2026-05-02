@@ -3,7 +3,7 @@ import {
   OutgoingArrowIcon,
   IncomingCheckIcon,
   WalletSwapIcon,
-} from '@/app/components/core/Icons';
+} from '@/components/core/Icons';
 
 interface TransactionListItemProps {
   readonly transaction: Transaction;

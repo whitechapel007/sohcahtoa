@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Modal from '@/app/components/core/Modal';
-import { BuyFXIcon, SellFXIcon, ReceiveMoneyIcon } from '@/app/components/core/Icons';
+import Modal from '@/components/core/Modal';
+import { BuyFXIcon, SellFXIcon, ReceiveMoneyIcon } from '@/components/core/Icons';
 
 interface ActionModalProps {
   type: 'buy' | 'sell' | 'receive' | null;

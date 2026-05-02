@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import type { BalanceSummary } from '@/types';
-import { EyeOffIcon, ChevronDownIcon } from '@/app/components/core/Icons';
+import { EyeOffIcon, ChevronDownIcon } from '@/components/core/Icons';
 
 interface BalanceWidgetProps {
   balance: BalanceSummary;

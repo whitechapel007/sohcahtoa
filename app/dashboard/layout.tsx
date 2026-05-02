@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { decodeToken } from '@/lib/auth-tokens';
-import Sidebar from '@/app/components/navigation/Sidebar';
-import TopNav from '@/app/components/navigation/TopNav';
+import Sidebar from '@/components/navigation/Sidebar';
+import TopNav from '@/components/navigation/TopNav';
 
 const ACCESS_COOKIE = 'dashboard.access_token';
 
