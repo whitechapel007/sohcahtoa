@@ -2,7 +2,7 @@ import type { Transaction } from "@/types";
 import {
   IncomingCheckIcon,
   OutgoingArrowIcon,
-  WalletSwapIcon,
+  TransactionsIcon,
 } from "@/components/core/Icons";
 
 interface TransactionListItemProps {
@@ -31,16 +31,15 @@ function formatAmount(amount: number): string {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-  const prefix = amount >= 0 ? "+" : "-";
-  return `${prefix}$${abs}`;
+  return amount < 0 ? `-$${abs}` : `$${abs}`;
 }
 
 export default function TransactionListItem({
   transaction,
 }: TransactionListItemProps) {
-  const isTransfer = transaction.category === "Transfer";
-  const isOutgoing = !isTransfer && transaction.amount < 0;
-  const isIncoming = !isTransfer && transaction.amount >= 0;
+  const isWalletTransfer = transaction.recipient === "Internal Wallet";
+  const isOutgoing = !isWalletTransfer && transaction.amount < 0;
+  const isIncoming = !isWalletTransfer && transaction.amount >= 0;
 
   return (
     <div className="flex items-center gap-3 py-3">
@@ -50,7 +49,7 @@ export default function TransactionListItem({
           w-9 h-9 rounded-full flex items-center justify-center shrink-0
           ${isOutgoing ? "bg-brand-orange-light" : ""}
           ${isIncoming ? "bg-positive-bg" : ""}
-          ${isTransfer ? "bg-neutral-100" : ""}
+          ${isWalletTransfer ? "bg-neutral-100" : ""}
         `}
       >
         {isOutgoing && (
@@ -59,7 +58,9 @@ export default function TransactionListItem({
         {isIncoming && (
           <IncomingCheckIcon size={13} className="text-positive" />
         )}
-        {isTransfer && <WalletSwapIcon size={15} className="text-neutral-500" />}
+        {isWalletTransfer && (
+          <TransactionsIcon size={15} className="text-neutral-500" />
+        )}
       </div>
 
       {/* Description + date */}
@@ -76,7 +77,7 @@ export default function TransactionListItem({
       <span
         className={`
           text-sm font-semibold shrink-0
-          ${transaction.amount >= 0 ? "text-positive" : "text-neutral-800"}
+          ${isIncoming ? "text-positive" : "text-neutral-800"}
         `}
       >
         {formatAmount(transaction.amount)}

@@ -39,7 +39,7 @@ export default function FXActions() {
             key={key}
             onClick={() => setModalType(key)}
             className="
-      w-[100px] h-[100px]
+      w-[80px] h-[80px]
       flex flex-col items-center justify-center gap-3
       rounded-2xl border border-neutral-200
       hover:border-neutral-300 hover:bg-neutral-50

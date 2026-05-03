@@ -1,16 +1,16 @@
 // Re-exports from iconsax-react with project-consistent aliases.
 
-import type { Icon, IconProps } from "iconsax-react";
+import type { Icon, IconProps } from "iconsax-reactjs";
 import {
   Add,
   ArrowDown2,
   ArrowLeft2,
   ArrowRight2,
-  ArrowSwapHorizontal,
+
   Calculator,
   Cards,
-  Check,
-  Export,
+  ImportCircle,
+  ExportCircle,
   Eye,
   EyeSlash,
   Home,
@@ -22,7 +22,7 @@ import {
   SearchNormal,
   WalletAdd,
   WalletMinus,
-} from "iconsax-react";
+} from "iconsax-reactjs";
 
 function withOutlineVariant(IconComponent: Icon): Icon {
   return function OutlinedIcon(props: IconProps) {
@@ -45,8 +45,8 @@ export const EyeOffIcon = withOutlineVariant(EyeSlash);
 export const BuyFXIcon = withOutlineVariant(WalletMinus);
 export const SellFXIcon = withOutlineVariant(WalletAdd);
 export const ReceiveMoneyIcon = withOutlineVariant(MoneyRecive);
-export const OutgoingArrowIcon = withOutlineVariant(Export);
-export const IncomingCheckIcon = withOutlineVariant(Check);
-export const WalletSwapIcon = withOutlineVariant(ArrowSwapHorizontal);
+export const OutgoingArrowIcon = withOutlineVariant(ExportCircle);
+export const IncomingCheckIcon = withOutlineVariant(ImportCircle);
+
 export const LogoutIcon = withOutlineVariant(Logout);
 export const PlusIcon = withOutlineVariant(Add);

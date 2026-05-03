@@ -84,9 +84,15 @@ export default function Sidebar({ userName, userEmail }: SidebarProps) {
         className={`flex items-center gap-3 px-5 py-6 ${collapsed ? "px-4 justify-center" : ""}`}
       >
         {!collapsed ? (
-          <Image src="/logo.svg" alt="" width={120} height={100} />
+          <Image
+            src="/logo.svg"
+            alt=""
+            width={120}
+            height={80}
+            loading="eager"
+          />
         ) : (
-          <Image src="/logo.png" alt="" width={300} height={300} />
+          <Image src="/logo.png" alt="" width={48} height={48} />
         )}
       </div>
 

@@ -1,33 +1,51 @@
-import { cookies, headers } from 'next/headers';
-import { decodeToken } from '@/lib/auth-tokens';
-import { ACCESS_COOKIE } from '@/lib/auth-cookies';
-import type { PaginatedTransactions, UserRole } from '@/types';
-import TransactionsTable from '@/components/dashboard/TransactionsTable';
+import { cookies } from "next/headers";
+import { decodeToken } from "@/lib/auth-tokens";
+import { ACCESS_COOKIE } from "@/lib/auth-cookies";
+import type { PaginatedTransactions, UserRole } from "@/types";
+import TransactionsTable from "@/components/dashboard/TransactionsTable";
 
-async function fetchInitialTransactions(cookieHeader: string, host: string): Promise<PaginatedTransactions> {
-  const proto = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-  const res = await fetch(`${proto}://${host}/api/dashboard/transactions?sort=date&order=desc&page=1`, {
-    cache: 'no-store',
-    headers: { cookie: cookieHeader },
-  });
-  if (!res.ok) throw new Error(`Transactions fetch failed: ${res.status}`);
-  return res.json() as Promise<PaginatedTransactions>;
+const EMPTY_TRANSACTIONS: PaginatedTransactions = {
+  data: [],
+  total: 0,
+  page: 1,
+  pages: 1,
+  limit: 8,
+};
+
+async function fetchInitialTransactions(): Promise<PaginatedTransactions> {
+  const res = await fetch(
+    "/api/dashboard/transactions?sort=date&order=desc&page=1",
+    { cache: "no-store" },
+  );
+
+  if (!res.ok) {
+    throw new Error(`Transactions fetch failed: ${res.status}`);
+  }
+
+  return res.json();
 }
 
 export default async function TransactionsPage() {
-  const [cookieStore, headersList] = await Promise.all([cookies(), headers()]);
-  const cookieHeader = headersList.get('cookie') ?? '';
-  const host = headersList.get('host') ?? 'localhost:3000';
+  const cookieStore = await cookies();
 
-  const token = cookieStore.get(ACCESS_COOKIE)?.value;
-  const payload = token ? decodeToken(token) : null;
-  const userRole: UserRole = payload?.role ?? 'analyst';
+  let userRole: UserRole = "analyst";
 
-  let initialData: PaginatedTransactions;
   try {
-    initialData = await fetchInitialTransactions(cookieHeader, host);
+    const token = cookieStore.get(ACCESS_COOKIE)?.value;
+    if (token) {
+      const payload = decodeToken(token);
+      userRole = payload?.role ?? "analyst";
+    }
   } catch {
-    initialData = { data: [], total: 0, page: 1, pages: 1, limit: 8 };
+    userRole = "analyst";
+  }
+
+  let initialData = EMPTY_TRANSACTIONS;
+
+  try {
+    initialData = await fetchInitialTransactions();
+  } catch {
+    // silently fallback
   }
 
   return <TransactionsTable initialData={initialData} userRole={userRole} />;

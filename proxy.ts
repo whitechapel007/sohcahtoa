@@ -36,7 +36,7 @@ function handleInlineRefresh(request: NextRequest, refreshToken: string) {
     return redirectToLogin(request, "session_expired");
   }
 
-  const tokens = createTokens(payload.sub, payload.role, payload.name);
+  const tokens = createTokens(payload.sub, payload.role, payload.name, payload.email);
 
   const base = {
     httpOnly: true,

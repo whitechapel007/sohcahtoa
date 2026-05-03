@@ -34,19 +34,19 @@ export default async function DashboardPage() {
       </div>
 
       {/* ───────────────── RIGHT COLUMN ───────────────── */}
-      <div className="w-[450px] shrink-0">
-        <div className="bg-panel rounded-2xl p-6 shadow-sm flex flex-col gap-6">
-          {/* Cards */}
+      <div className="w-112.5 shrink-0 flex flex-col gap-6">
+        {/* Cards */}
+        <div className="bg-panel rounded-2xl p-6 shadow-sm">
           <CardWidget cards={cards} />
+        </div>
 
-          <div className="border-t border-neutral-100" />
-
-          {/* Card Transactions */}
+        {/* Card Transactions */}
+        <div className="bg-panel rounded-2xl p-6 shadow-sm">
           <CardTransactionList transactions={cardTransactions} />
+        </div>
 
-          <div className="border-t border-neutral-100" />
-
-          {/* Flows */}
+        {/* Flows */}
+        <div className="bg-panel rounded-2xl p-6 shadow-sm">
           <CardFlows balance={balance} />
         </div>
       </div>

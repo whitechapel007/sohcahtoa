@@ -8,7 +8,7 @@ interface Toast {
   type: "success" | "error" | "info";
 }
 
-import { X } from "lucide-react";
+import { CloseCircle } from "iconsax-reactjs";
 
 interface ToastContextValue {
   toasts: Toast[];
@@ -64,7 +64,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
               onClick={() => removeToast(toast.id)}
               className="shrink-0 opacity-70 hover:opacity-100 transition-opacity"
             >
-              <X />
+              <CloseCircle />
             </button>
           </div>
         ))}

@@ -32,8 +32,10 @@
   --color-neutral-800: #1f2937;
   --color-neutral-900: #111827;
 
-  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), monospace;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-inter), monospace;
+  --font-space-grotesk:
+    var(--font-space-grotesk), var(--font-inter), sans-serif;
 }
 
 *,
@@ -55,6 +57,21 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.font-space-grotesk {
+  font-family: var(--font-space-grotesk);
+  font-weight: 700;
+  font-style: normal;
+  line-height: 120% !important;
+  letter-spacing: 0%;
+  leading-trim: none;
+}
+
+@layer utilities {
+  .text-space-bold {
+    @apply font-space-grotesk;
+  }
 }
 
 /* Card shine overlay */

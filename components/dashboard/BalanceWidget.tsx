@@ -36,10 +36,10 @@ export default function BalanceWidget({ balance }: BalanceWidgetProps) {
                 key={tab}
                 onClick={() => setActiveFilter(tab)}
                 className={`
-                  px-4 py-1.5 rounded-full text-sm font-medium transition
+                  px-2.5 py-0.75 rounded-full text-sm font-medium transition
                   ${
                     isActive
-                      ? "bg-orange-50 text-brand-orange border border-orange-200"
+                      ? "bg-[#FFF6F1] text-brand-orange border border-orange-200"
                       : "bg-transparent text-neutral-500 border border-neutral-200 hover:border-neutral-300"
                   }
                 `}
@@ -51,7 +51,7 @@ export default function BalanceWidget({ balance }: BalanceWidgetProps) {
         </div>
 
         {/* Right pill (Medicals) */}
-        <button className="flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white rounded-full text-sm font-medium">
+        <button className="flex items-center gap-2 px-2 py-2 bg-neutral-900 text-white rounded-full text-xs font-medium">
           <span>Medicals</span>
           <ChevronDownIcon size={14} className="text-neutral-300" />
         </button>
@@ -60,7 +60,7 @@ export default function BalanceWidget({ balance }: BalanceWidgetProps) {
       {/* ── Balance Block ── */}
       <div className="flex flex-col gap-2">
         {/* Label */}
-        <div className="flex items-center gap-2 text-neutral-500 text-sm">
+        <div className="flex items-center gap-2 text-main-text text-sm">
           <span>Total FX units</span>
           <button
             onClick={() => setHidden((h) => !h)}
@@ -73,17 +73,17 @@ export default function BalanceWidget({ balance }: BalanceWidgetProps) {
         {/* Amount */}
         <div className="flex items-center gap-3">
           {/* $ badge */}
-          <div className="w-9 h-9 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-700 font-semibold">
+          <div className="w-9 h-9 rounded-xl bg-[#ECECEC] flex items-center justify-center text-neutral-700 font-semibold">
             $
           </div>
 
           {hidden ? (
-            <span className="text-[44px] leading-none font-semibold tracking-tight text-neutral-900">
+            <span className="font-space-grotesk text-[32px] leading-none tracking-tight text-neutral-900 bg-[#232323] px-4 py-2 rounded">
               ••••••••
             </span>
           ) : (
-            <div className="flex items-end gap-1">
-              <span className="text-[44px] leading-none font-semibold tracking-tight text-neutral-900">
+            <div className="flex items-end">
+              <span className="font-space-grotesk text-[32px] leading-none tracking-tight text-main-text py-2 rounded">
                 {dollars}
               </span>
               <span className="text-[24px] font-semibold text-neutral-400 mb-1">

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-import { ShieldX } from "lucide-react";
+import { SafeHome } from "iconsax-reactjs";
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -17,7 +17,7 @@ export default function DashboardError({ error, reset }: ErrorProps) {
   return (
     <div className="flex flex-col items-center justify-center h-full min-h-[60vh] gap-4 p-6">
       <div className="w-14 h-14 rounded-2xl bg-negative-bg flex items-center justify-center text-2xl">
-        <ShieldX />
+        <SafeHome />
       </div>
       <h2 className="text-lg font-semibold text-neutral-800">
         Something went wrong

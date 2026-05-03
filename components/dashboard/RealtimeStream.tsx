@@ -4,16 +4,19 @@ import { useEffect, useRef } from 'react';
 import type { Transaction } from '@/types';
 
 interface Props {
-  onNewTransaction: (tx: Transaction) => void;
+  onTransaction: (tx: Transaction) => void;
+  onError?: (err: Event) => void;
 }
 
-export default function RealtimeStream({ onNewTransaction }: Props) {
-  // Keep callback ref current so the EventSource never needs to reconnect
+export default function RealtimeStream({ onTransaction, onError }: Props) {
+  // Keep callback refs current so the EventSource never needs to reconnect
   // when the parent re-renders. Without this, every state update in the
   // parent recreates the callback, which triggers useEffect, which closes
   // and reopens the connection on every incoming message.
-  const callbackRef = useRef(onNewTransaction);
-  useEffect(() => { callbackRef.current = onNewTransaction; }, [onNewTransaction]);
+  const callbackRef = useRef(onTransaction);
+  const errorRef = useRef(onError);
+  useEffect(() => { callbackRef.current = onTransaction; }, [onTransaction]);
+  useEffect(() => { errorRef.current = onError; }, [onError]);
 
   useEffect(() => {
     const es = new EventSource('/api/dashboard/stream');
@@ -24,6 +27,10 @@ export default function RealtimeStream({ onNewTransaction }: Props) {
       } catch {
         // ignore malformed events
       }
+    };
+
+    es.onerror = (err) => {
+      errorRef.current?.(err);
     };
 
     return () => es.close();

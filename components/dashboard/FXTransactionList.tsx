@@ -33,13 +33,11 @@ export default function FXTransactionList({
     <div className="flex flex-col">
       {/* ── Header ── */}
       <div className="flex items-center justify-between mb-5">
-        <h2 className="text-sm font-semibold text-neutral-900">
-          FX transactions
-        </h2>
+        <h2 className="text-sm text-main-text">FX transactions</h2>
 
         <Link
           href="/dashboard/transactions"
-          className="text-xs font-medium text-neutral-600 border border-neutral-200 px-3 py-1 rounded-full hover:text-neutral-900 hover:border-neutral-300 transition"
+          className="text-sm font-medium text-main-text border border-neutral-200 px-3 py-1 rounded-full hover:text-neutral-900 hover:border-neutral-300 transition"
         >
           See all
         </Link>
@@ -55,10 +53,10 @@ export default function FXTransactionList({
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`
-                px-3 py-1 rounded-full text-xs font-medium transition-all
+                px-3 py-1 rounded-full text-sm  transition-all
                 ${
                   isActive
-                    ? "bg-orange-50 text-brand-orange border border-orange-200"
+                    ? "bg-[#FFF6F1] text-brand-orange border border-orange-200"
                     : "text-neutral-500 border border-transparent hover:text-neutral-700"
                 }
               `}
@@ -76,14 +74,8 @@ export default function FXTransactionList({
             No transactions found.
           </p>
         ) : (
-          filtered.map((tx, index) => (
-            <div
-              key={tx.id}
-              className={`
-                ${index !== 0 ? "border-t border-neutral-100" : ""}
-                py-3
-              `}
-            >
+          filtered.map((tx) => (
+            <div key={tx.id} className="py-3">
               <TransactionListItem transaction={tx} />
             </div>
           ))

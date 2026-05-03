@@ -49,7 +49,7 @@ export default function LoginPage() {
       {/* Branding */}
       <div className="flex flex-col items-center gap-4 mb-10">
         <div className="">
-          <Image src="/logo.svg" alt="" width={200} height={200} />
+          <Image src="/logo.svg" alt="" width={200} height={160} />
         </div>
       </div>
 
