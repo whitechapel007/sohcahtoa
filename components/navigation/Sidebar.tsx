@@ -116,7 +116,7 @@ export default function Sidebar({ userName, userEmail }: SidebarProps) {
                   ${isActive ? "text-brand-orange" : "text-inactive-text group-hover:text-neutral-600"}
                 `}
               >
-                <Icon size={18} />
+                <Icon size={18} variant={isActive ? "Bold" : "Outline"} />
               </div>
 
               {!collapsed && (
