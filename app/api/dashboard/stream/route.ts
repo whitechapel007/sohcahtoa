@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { decodeToken } from '@/lib/auth-tokens';
 import { ACCESS_COOKIE } from '@/lib/auth-cookies';
+import { registerStreamTransaction } from '@/data/mock/stream-store';
 import type { Transaction } from '@/types';
 
 export const dynamic = 'force-dynamic';
@@ -47,6 +48,7 @@ export async function GET(request: NextRequest) {
         }
         counter += 1;
         const tx = makeTransaction(counter);
+        registerStreamTransaction(tx);
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(tx)}\n\n`));
       }, INTERVAL_MS);
     },

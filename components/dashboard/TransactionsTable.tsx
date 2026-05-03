@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useCallback, useTransition, useRef, useEffect } from 'react';
+import { useState, useCallback, useTransition, useRef, useEffect } from "react";
 import {
   Search,
   ChevronLeft,
@@ -10,59 +10,71 @@ import {
   Loader2,
   AlertCircle,
   Inbox,
-} from 'lucide-react';
-import type { Transaction, PaginatedTransactions, SortField, SortOrder, UserRole } from '@/types';
-import { apiFetchJSON, ApiClientError } from '@/lib/api-client';
-import RealtimeStream from './RealtimeStream';
-import TransactionDetailPanel from './TransactionDetailPanel';
+} from "lucide-react";
+import type {
+  Transaction,
+  PaginatedTransactions,
+  SortField,
+  SortOrder,
+  UserRole,
+} from "@/types";
+import { apiFetchJSON, ApiClientError } from "@/lib/api-client";
+import RealtimeStream from "./RealtimeStream";
+import TransactionDetailPanel from "./TransactionDetailPanel";
 
 interface Props {
   initialData: PaginatedTransactions;
   userRole: UserRole;
 }
 
-const STATUS_OPTIONS = ['all', 'pending', 'completed', 'flagged', 'failed'] as const;
+const STATUS_OPTIONS = [
+  "all",
+  "pending",
+  "completed",
+  "flagged",
+  "failed",
+] as const;
 
 const STATUS_LABEL: Record<string, string> = {
-  all:       'All statuses',
-  pending:   'Pending',
-  completed: 'Completed',
-  flagged:   'Flagged',
-  failed:    'Failed',
+  all: "All statuses",
+  pending: "Pending",
+  completed: "Completed",
+  flagged: "Flagged",
+  failed: "Failed",
 };
 
 const STATUS_STYLES: Record<string, string> = {
-  pending:   'bg-amber-100 text-amber-700',
-  completed: 'bg-positive-bg text-positive',
-  flagged:   'bg-negative-bg text-negative',
-  failed:    'bg-neutral-100 text-neutral-500',
+  pending: "bg-amber-100 text-amber-700",
+  completed: "bg-positive-bg text-positive",
+  flagged: "bg-negative-bg text-negative",
+  failed: "bg-neutral-100 text-neutral-500",
 };
 
 function fmtAmount(amount: number) {
-  const abs = Math.abs(amount).toLocaleString('en-US', {
+  const abs = Math.abs(amount).toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-  return `${amount >= 0 ? '+' : '-'}$${abs}`;
+  return `${amount >= 0 ? "+" : "-"}$${abs}`;
 }
 
 function fmtDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
+  return new Date(iso).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
   });
 }
 
 export default function TransactionsTable({ initialData, userRole }: Props) {
   const [data, setData] = useState(initialData);
-  const [search, setSearch] = useState('');
-  const [appliedSearch, setAppliedSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
-  const [sort, setSort] = useState<SortField>('date');
-  const [order, setOrder] = useState<SortOrder>('desc');
+  const [search, setSearch] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [sort, setSort] = useState<SortField>("date");
+  const [order, setOrder] = useState<SortOrder>("desc");
   const [page, setPage] = useState(1);
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -81,13 +93,14 @@ export default function TransactionsTable({ initialData, userRole }: Props) {
       page: number;
     }) => {
       const sp = new URLSearchParams();
-      if (params.search) sp.set('search', params.search);
-      if (params.status && params.status !== 'all') sp.set('status', params.status);
-      if (params.dateFrom) sp.set('dateFrom', params.dateFrom);
-      if (params.dateTo) sp.set('dateTo', params.dateTo);
-      sp.set('sort', params.sort);
-      sp.set('order', params.order);
-      sp.set('page', String(params.page));
+      if (params.search) sp.set("search", params.search);
+      if (params.status && params.status !== "all")
+        sp.set("status", params.status);
+      if (params.dateFrom) sp.set("dateFrom", params.dateFrom);
+      if (params.dateTo) sp.set("dateTo", params.dateTo);
+      sp.set("sort", params.sort);
+      sp.set("order", params.order);
+      sp.set("page", String(params.page));
 
       startTransition(async () => {
         try {
@@ -98,7 +111,9 @@ export default function TransactionsTable({ initialData, userRole }: Props) {
           setFetchError(null);
         } catch (err) {
           setFetchError(
-            err instanceof ApiClientError ? err.message : 'Failed to load transactions.',
+            err instanceof ApiClientError
+              ? err.message
+              : "Failed to load transactions.",
           );
         }
       });
@@ -111,10 +126,18 @@ export default function TransactionsTable({ initialData, userRole }: Props) {
       isFirstRender.current = false;
       return;
     }
-    fetchData({ search: appliedSearch, status: statusFilter, dateFrom, dateTo, sort, order, page });
-  // appliedSearch intentionally omitted: search changes go through the debounce
-  // handler which updates appliedSearch and page together in one shot.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchData({
+      search: appliedSearch,
+      status: statusFilter,
+      dateFrom,
+      dateTo,
+      sort,
+      order,
+      page,
+    });
+    // appliedSearch intentionally omitted: search changes go through the debounce
+    // handler which updates appliedSearch and page together in one shot.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appliedSearch, statusFilter, dateFrom, dateTo, sort, order, page]);
 
   function handleSearchChange(value: string) {
@@ -128,10 +151,10 @@ export default function TransactionsTable({ initialData, userRole }: Props) {
 
   function toggleSort(field: SortField) {
     if (sort === field) {
-      setOrder((o) => (o === 'asc' ? 'desc' : 'asc'));
+      setOrder((o) => (o === "asc" ? "desc" : "asc"));
     } else {
       setSort(field);
-      setOrder('desc');
+      setOrder("desc");
     }
     setPage(1);
   }
@@ -139,13 +162,14 @@ export default function TransactionsTable({ initialData, userRole }: Props) {
   function handleNewTransaction(tx: Transaction) {
     if (
       page !== 1 ||
-      statusFilter !== 'all' ||
+      statusFilter !== "all" ||
       appliedSearch ||
       dateFrom ||
       dateTo ||
-      sort !== 'date' ||
-      order !== 'desc'
-    ) return;
+      sort !== "date" ||
+      order !== "desc"
+    )
+      return;
 
     setData((prev) => {
       if (prev.data.some((t) => t.id === tx.id)) return prev; // deduplicate
@@ -167,18 +191,23 @@ export default function TransactionsTable({ initialData, userRole }: Props) {
 
   function clearFilters() {
     if (searchDebounce.current) clearTimeout(searchDebounce.current);
-    setSearch('');
-    setAppliedSearch('');
-    setStatusFilter('all');
-    setDateFrom('');
-    setDateTo('');
+    setSearch("");
+    setAppliedSearch("");
+    setStatusFilter("all");
+    setDateFrom("");
+    setDateTo("");
     setPage(1);
   }
 
-  const hasActiveFilters = !!(appliedSearch || statusFilter !== 'all' || dateFrom || dateTo);
+  const hasActiveFilters = !!(
+    appliedSearch ||
+    statusFilter !== "all" ||
+    dateFrom ||
+    dateTo
+  );
 
   return (
-    <div className="p-5">
+    <div className="p-8">
       <h1 className="text-xl font-bold text-neutral-900 mb-1">Transactions</h1>
       <p className="text-sm text-neutral-500 mb-5">
         All your FX and payment activity in one place.
@@ -255,13 +284,28 @@ export default function TransactionsTable({ initialData, userRole }: Props) {
         {/* Column headers */}
         <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-4 px-6 py-3 border-b border-neutral-100 text-xs font-semibold text-neutral-500 uppercase tracking-wide">
           <span>Description</span>
-          <SortButton field="amount" current={sort} order={order} onToggle={toggleSort}>
+          <SortButton
+            field="amount"
+            current={sort}
+            order={order}
+            onToggle={toggleSort}
+          >
             Amount
           </SortButton>
-          <SortButton field="status" current={sort} order={order} onToggle={toggleSort}>
+          <SortButton
+            field="status"
+            current={sort}
+            order={order}
+            onToggle={toggleSort}
+          >
             Status
           </SortButton>
-          <SortButton field="date" current={sort} order={order} onToggle={toggleSort}>
+          <SortButton
+            field="date"
+            current={sort}
+            order={order}
+            onToggle={toggleSort}
+          >
             Date
           </SortButton>
           <span>Category</span>
@@ -298,9 +342,11 @@ export default function TransactionsTable({ initialData, userRole }: Props) {
           data.data.map((tx) => (
             <button
               key={tx.id}
-              onClick={() => setSelectedTx(selectedTx?.id === tx.id ? null : tx)}
+              onClick={() =>
+                setSelectedTx(selectedTx?.id === tx.id ? null : tx)
+              }
               className={`w-full grid grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-4 px-6 py-3.5 border-b border-neutral-50 text-left hover:bg-neutral-50 transition-colors ${
-                selectedTx?.id === tx.id ? 'bg-brand-orange-light' : ''
+                selectedTx?.id === tx.id ? "bg-brand-orange-light" : ""
               }`}
             >
               <span className="text-sm font-medium text-neutral-800 truncate">
@@ -308,7 +354,7 @@ export default function TransactionsTable({ initialData, userRole }: Props) {
               </span>
               <span
                 className={`text-sm font-semibold ${
-                  tx.amount >= 0 ? 'text-positive' : 'text-neutral-800'
+                  tx.amount >= 0 ? "text-positive" : "text-neutral-800"
                 }`}
               >
                 {fmtAmount(tx.amount)}
@@ -320,7 +366,9 @@ export default function TransactionsTable({ initialData, userRole }: Props) {
               >
                 {tx.status}
               </span>
-              <span className="text-sm text-neutral-500">{fmtDate(tx.date)}</span>
+              <span className="text-sm text-neutral-500">
+                {fmtDate(tx.date)}
+              </span>
               <span className="text-sm text-neutral-500">{tx.category}</span>
             </button>
           ))}
@@ -363,7 +411,7 @@ export default function TransactionsTable({ initialData, userRole }: Props) {
             className="fixed inset-0 z-30 bg-black/5"
             onClick={() => setSelectedTx(null)}
           />
-          <div className="fixed inset-y-0 right-0 z-40 w-80 bg-panel shadow-2xl border-l border-neutral-200 flex flex-col">
+          <div className="fixed inset-y-0 right-0 z-40 w-[420px] bg-panel shadow-2xl border-l border-neutral-200 flex flex-col">
             <TransactionDetailPanel
               transaction={selectedTx}
               userRole={userRole}
@@ -389,18 +437,28 @@ interface SortButtonProps {
   children: React.ReactNode;
 }
 
-function SortButton({ field, current, order, onToggle, children }: SortButtonProps) {
+function SortButton({
+  field,
+  current,
+  order,
+  onToggle,
+  children,
+}: SortButtonProps) {
   const isActive = current === field;
   return (
     <button
       onClick={() => onToggle(field)}
       className={`flex items-center gap-0.5 hover:text-neutral-800 transition-colors ${
-        isActive ? 'text-neutral-800' : ''
+        isActive ? "text-neutral-800" : ""
       }`}
     >
       {children}
       {isActive ? (
-        order === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />
+        order === "asc" ? (
+          <ChevronUp size={12} />
+        ) : (
+          <ChevronDown size={12} />
+        )
       ) : (
         <ChevronDown size={12} className="opacity-30" />
       )}

@@ -1,14 +1,15 @@
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 
-export type UserRole = 'admin' | 'analyst';
+export type UserRole = "admin" | "analyst";
 
 export interface AuthTokenPayload {
   sub: string;
   role: UserRole;
   name: string;
+  email: string;
   iat: number;
   exp: number;
-  type: 'access' | 'refresh';
+  type: "access" | "refresh";
 }
 
 export interface AuthTokens {
@@ -26,9 +27,9 @@ export interface AuthUser {
 
 // ─── Transactions ─────────────────────────────────────────────────────────────
 
-export type TransactionStatus = 'pending' | 'completed' | 'flagged' | 'failed';
-export type SortField = 'date' | 'amount' | 'status';
-export type SortOrder = 'asc' | 'desc';
+export type TransactionStatus = "pending" | "completed" | "flagged" | "failed";
+export type SortField = "date" | "amount" | "status";
+export type SortOrder = "asc" | "desc";
 
 export interface Transaction {
   id: string;
@@ -36,7 +37,7 @@ export interface Transaction {
   amount: number;
   currency: string;
   status: TransactionStatus;
-  category: 'FX' | 'PTA' | 'BTA' | 'Medicals' | 'Transfer';
+  category: "FX" | "PTA" | "BTA" | "Medicals" | "Transfer";
   date: string; // ISO 8601
   sender: string;
   recipient: string;
@@ -57,7 +58,7 @@ export interface PaginatedResponse<T> {
 export type PaginatedTransactions = PaginatedResponse<Transaction>;
 
 export interface TransactionFilters {
-  status?: TransactionStatus | 'all';
+  status?: TransactionStatus | "all";
   dateFrom?: string;
   dateTo?: string;
   search?: string;
@@ -69,10 +70,10 @@ export interface TransactionFilters {
 
 // ─── Cards / Balance (existing dashboard widgets) ────────────────────────────
 
-export type TransactionDirection = 'incoming' | 'outgoing' | 'wallet';
-export type TransactionCategory = 'FX' | 'PTA' | 'BTA' | 'Medicals';
-export type CardNetwork = 'VISA' | 'Mastercard';
-export type CardType = 'prepaid' | 'virtual';
+export type TransactionDirection = "incoming" | "outgoing" | "wallet";
+export type TransactionCategory = "FX" | "PTA" | "BTA" | "Medicals";
+export type CardNetwork = "VISA" | "Mastercard";
+export type CardType = "prepaid" | "virtual";
 
 export interface VirtualCard {
   id: string;
@@ -83,7 +84,7 @@ export interface VirtualCard {
   balance: number;
   currency: string;
   holder: string;
-  color: 'orange' | 'dark';
+  color: "orange" | "dark";
 }
 
 export interface BalanceSummary {

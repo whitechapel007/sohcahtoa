@@ -1,63 +1,91 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import type { Transaction, TransactionCategory } from '@/types';
-import TransactionListItem from './TransactionListItem';
+import { useState } from "react";
+import Link from "next/link";
+import type { Transaction, TransactionCategory } from "@/types";
+import TransactionListItem from "./TransactionListItem";
 
 interface FXTransactionListProps {
   readonly transactions: Transaction[];
 }
 
-const TABS: (TransactionCategory | 'All')[] = ['All', 'FX', 'PTA', 'BTA', 'Medicals'];
+const TABS: (TransactionCategory | "All")[] = [
+  "All",
+  "FX",
+  "PTA",
+  "BTA",
+  "Medicals",
+];
 
-export default function FXTransactionList({ transactions }: FXTransactionListProps) {
-  const [activeTab, setActiveTab] = useState<TransactionCategory | 'All'>('All');
+export default function FXTransactionList({
+  transactions,
+}: FXTransactionListProps) {
+  const [activeTab, setActiveTab] = useState<TransactionCategory | "All">(
+    "All",
+  );
 
   const filtered =
-    activeTab === 'All'
+    activeTab === "All"
       ? transactions
       : transactions.filter((t) => t.category === activeTab);
 
   return (
-    <div>
-      {/* Section header */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold text-neutral-800">FX transactions</h2>
+    <div className="flex flex-col">
+      {/* ── Header ── */}
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-sm font-semibold text-neutral-900">
+          FX transactions
+        </h2>
+
         <Link
           href="/dashboard/transactions"
-          className="text-xs font-medium text-neutral-500 border border-neutral-200 px-3 py-1.5 rounded-full hover:text-brand-orange hover:border-brand-orange transition-all"
+          className="text-xs font-medium text-neutral-600 border border-neutral-200 px-3 py-1 rounded-full hover:text-neutral-900 hover:border-neutral-300 transition"
         >
           See all
         </Link>
       </div>
 
-      {/* Filter tabs */}
-      <div className="flex items-center gap-1.5 mb-3 flex-wrap">
-        {TABS.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`
-              px-3 py-1.5 rounded-full text-xs font-medium transition-all
-              ${activeTab === tab
-                ? 'border border-brand-orange text-brand-orange bg-white'
-                : 'border border-neutral-200 text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
-              }
-            `}
-          >
-            {tab}
-          </button>
-        ))}
+      {/* ── Tabs ── */}
+      <div className="flex items-center gap-2 mb-5">
+        {TABS.map((tab) => {
+          const isActive = activeTab === tab;
+
+          return (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`
+                px-3 py-1 rounded-full text-xs font-medium transition-all
+                ${
+                  isActive
+                    ? "bg-orange-50 text-brand-orange border border-orange-200"
+                    : "text-neutral-500 border border-transparent hover:text-neutral-700"
+                }
+              `}
+            >
+              {tab}
+            </button>
+          );
+        })}
       </div>
 
-      {/* List */}
-      <div className="divide-y divide-neutral-100">
+      {/* ── List ── */}
+      <div className="flex flex-col">
         {filtered.length === 0 ? (
-          <p className="text-sm text-neutral-400 py-6 text-center">No transactions found.</p>
+          <p className="text-sm text-neutral-400 py-8 text-center">
+            No transactions found.
+          </p>
         ) : (
-          filtered.map((tx) => (
-            <TransactionListItem key={tx.id} transaction={tx} />
+          filtered.map((tx, index) => (
+            <div
+              key={tx.id}
+              className={`
+                ${index !== 0 ? "border-t border-neutral-100" : ""}
+                py-3
+              `}
+            >
+              <TransactionListItem transaction={tx} />
+            </div>
           ))
         )}
       </div>

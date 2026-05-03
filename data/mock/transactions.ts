@@ -1,4 +1,5 @@
 import type { Transaction } from '@/types';
+import { getStreamTransaction, updateStreamTransaction } from '@/data/mock/stream-store';
 
 export const TRANSACTIONS: Transaction[] = [
   {
@@ -248,12 +249,14 @@ export const TRANSACTIONS: Transaction[] = [
 ];
 
 export function getTransactionById(id: string): Transaction | undefined {
-  return TRANSACTIONS.find((t) => t.id === id);
+  return TRANSACTIONS.find((t) => t.id === id) ?? getStreamTransaction(id);
 }
 
 export function updateTransaction(id: string, patch: Partial<Transaction>): Transaction | null {
   const idx = TRANSACTIONS.findIndex((t) => t.id === id);
-  if (idx === -1) return null;
-  TRANSACTIONS[idx] = { ...TRANSACTIONS[idx], ...patch };
-  return TRANSACTIONS[idx];
+  if (idx !== -1) {
+    TRANSACTIONS[idx] = { ...TRANSACTIONS[idx], ...patch };
+    return TRANSACTIONS[idx];
+  }
+  return updateStreamTransaction(id, patch);
 }
