@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { decodeToken } from '@/lib/auth-tokens';
-import { ACCESS_COOKIE } from '@/lib/auth-cookies';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api-route-helpers';
 import { registerStreamTransaction } from '@/data/mock/stream-store';
 import type { Transaction } from '@/types';
 
@@ -26,11 +25,8 @@ const SENDERS = [
 ];
 
 export async function GET(request: NextRequest) {
-  const token = request.cookies.get(ACCESS_COOKIE)?.value;
-  const payload = token ? decodeToken(token) : null;
-  if (!payload || Date.now() > payload.exp) {
-    return NextResponse.json({ code: 'UNAUTHORIZED' }, { status: 401 });
-  }
+  const auth = requireAuth(request);
+  if (!auth.ok) return auth.response;
 
   let counter = 0;
   let intervalId: ReturnType<typeof setInterval>;
@@ -40,12 +36,13 @@ export async function GET(request: NextRequest) {
     start(controller) {
       controller.enqueue(encoder.encode(': connected\n\n'));
 
+      // Fires immediately on client disconnect or HMR — don't wait for next tick
+      request.signal.addEventListener('abort', () => {
+        clearInterval(intervalId);
+        try { controller.close(); } catch {}
+      }, { once: true });
+
       intervalId = setInterval(() => {
-        if (request.signal.aborted) {
-          clearInterval(intervalId);
-          controller.close();
-          return;
-        }
         counter += 1;
         const tx = makeTransaction(counter);
         registerStreamTransaction(tx);
@@ -82,6 +79,6 @@ function makeTransaction(counter: number): Transaction {
     date: new Date().toISOString(),
     sender: SENDERS[counter % SENDERS.length],
     recipient: 'Emmanuel Israel',
-    accountNumber: '•••• •••• •••• 0000',
+    accountNumber: '0000',
   };
 }

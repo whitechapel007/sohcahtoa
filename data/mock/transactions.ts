@@ -12,7 +12,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2025-04-18T19:32:00.000Z',
     sender: 'Emmanuel Israel',
     recipient: 'Ruth Adeyemi',
-    accountNumber: '4532015112830366',
+    accountNumber: '0366',
   },
   {
     id: 'tx_002',
@@ -24,7 +24,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2025-03-02T06:59:00.000Z',
     sender: 'Tobi Adeleke',
     recipient: 'Emmanuel Israel',
-    accountNumber: '4916338506082832',
+    accountNumber: '2832',
   },
   {
     id: 'tx_003',
@@ -36,7 +36,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2025-03-02T10:08:00.000Z',
     sender: 'External Vendor',
     recipient: 'Emmanuel Israel',
-    accountNumber: '5425233430109903',
+    accountNumber: '9903',
   },
   {
     id: 'tx_004',
@@ -48,7 +48,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2025-02-19T16:27:00.000Z',
     sender: 'Emmanuel Israel',
     recipient: 'Internal Wallet',
-    accountNumber: '4539578763621486',
+    accountNumber: '1486',
   },
   {
     id: 'tx_005',
@@ -60,7 +60,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2025-02-07T23:50:00.000Z',
     sender: 'Tochukwu Nwosu',
     recipient: 'Emmanuel Israel',
-    accountNumber: '4916338506082832',
+    accountNumber: '2832',
   },
   {
     id: 'tx_006',
@@ -72,7 +72,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2025-01-15T09:00:00.000Z',
     sender: 'Emmanuel Israel',
     recipient: 'University of Lagos Bursar',
-    accountNumber: '4716347184862961',
+    accountNumber: '2961',
     flaggedBy: 'System',
     flaggedAt: '2025-01-15T09:05:00.000Z',
     note: 'Flagged for review: exceeds single-transaction limit',
@@ -87,7 +87,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2025-01-10T14:30:00.000Z',
     sender: 'Emmanuel Israel',
     recipient: 'British Airways',
-    accountNumber: '4929420419475148',
+    accountNumber: '5148',
   },
   {
     id: 'tx_008',
@@ -99,7 +99,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2025-01-05T11:00:00.000Z',
     sender: 'Emmanuel Israel',
     recipient: 'St. Nicholas Hospital',
-    accountNumber: '4532015112830366',
+    accountNumber: '0366',
   },
   {
     id: 'tx_009',
@@ -111,7 +111,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2024-12-28T08:15:00.000Z',
     sender: 'Esther Balogun',
     recipient: 'Emmanuel Israel',
-    accountNumber: '5425233430109903',
+    accountNumber: '9903',
   },
   {
     id: 'tx_010',
@@ -123,7 +123,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2024-12-20T13:45:00.000Z',
     sender: 'Emmanuel Israel',
     recipient: 'Greensprings School',
-    accountNumber: '4539578763621486',
+    accountNumber: '1486',
   },
   {
     id: 'tx_011',
@@ -135,7 +135,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2024-12-15T10:00:00.000Z',
     sender: 'Emmanuel Israel',
     recipient: 'FX Desk',
-    accountNumber: '4716347184862961',
+    accountNumber: '2961',
   },
   {
     id: 'tx_012',
@@ -147,7 +147,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2024-12-10T17:22:00.000Z',
     sender: 'Emmanuel Israel',
     recipient: 'Chidi Okeke',
-    accountNumber: '4929420419475148',
+    accountNumber: '5148',
   },
   {
     id: 'tx_013',
@@ -159,7 +159,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2024-12-05T09:30:00.000Z',
     sender: 'Emmanuel Israel',
     recipient: 'Transcorp Hilton',
-    accountNumber: '4532015112830366',
+    accountNumber: '0366',
     note: 'Awaiting supporting documentation',
   },
   {
@@ -172,7 +172,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2024-11-28T14:00:00.000Z',
     sender: 'Emmanuel Israel',
     recipient: 'Lagos Dental Clinic',
-    accountNumber: '4916338506082832',
+    accountNumber: '2832',
   },
   {
     id: 'tx_015',
@@ -184,7 +184,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2024-11-20T11:10:00.000Z',
     sender: 'Ngozi Adaeze',
     recipient: 'Emmanuel Israel',
-    accountNumber: '5425233430109903',
+    accountNumber: '9903',
   },
   {
     id: 'tx_016',
@@ -196,7 +196,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2024-11-15T08:45:00.000Z',
     sender: 'FX Desk',
     recipient: 'Emmanuel Israel',
-    accountNumber: '4539578763621486',
+    accountNumber: '1486',
   },
   {
     id: 'tx_017',
@@ -208,7 +208,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2024-11-10T16:00:00.000Z',
     sender: 'First Bank Nigeria',
     recipient: 'Emmanuel Israel',
-    accountNumber: '4716347184862961',
+    accountNumber: '2961',
   },
   {
     id: 'tx_018',
@@ -220,7 +220,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2024-11-05T10:30:00.000Z',
     sender: 'Emmanuel Israel',
     recipient: 'University of Edinburgh',
-    accountNumber: '4929420419475148',
+    accountNumber: '5148',
   },
   {
     id: 'tx_019',
@@ -232,7 +232,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2024-10-28T14:20:00.000Z',
     sender: 'Emmanuel Israel',
     recipient: 'Yusuf Mohammed',
-    accountNumber: '4532015112830366',
+    accountNumber: '0366',
   },
   {
     id: 'tx_020',
@@ -244,7 +244,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: '2024-10-15T07:00:00.000Z',
     sender: 'Emmanuel Israel',
     recipient: 'Apollo Hospital Chennai',
-    accountNumber: '4916338506082832',
+    accountNumber: '2832',
   },
 ];
 

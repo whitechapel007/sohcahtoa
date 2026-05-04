@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { decodeToken } from '@/lib/auth-tokens';
-import { ACCESS_COOKIE } from '@/lib/auth-cookies';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api-route-helpers';
 import { MOCK_CARDS } from '@/data/mock/cards';
 import type { Transaction } from '@/types';
 
@@ -22,11 +21,8 @@ const DESCRIPTIONS = [
 const SENDERS = ['Card network', 'Merchant', 'ATM operator', 'FX Desk', 'POS terminal'];
 
 export async function GET(request: NextRequest) {
-  const token = request.cookies.get(ACCESS_COOKIE)?.value;
-  const payload = token ? decodeToken(token) : null;
-  if (!payload || Date.now() > payload.exp) {
-    return NextResponse.json({ code: 'UNAUTHORIZED' }, { status: 401 });
-  }
+  const auth = requireAuth(request);
+  if (!auth.ok) return auth.response;
 
   let counter = 0;
   let txIntervalId: ReturnType<typeof setInterval>;
@@ -42,18 +38,21 @@ export async function GET(request: NextRequest) {
     start(controller) {
       controller.enqueue(encoder.encode(': connected\n\n'));
 
+      // Fires immediately on client disconnect or HMR — don't wait for next tick
+      request.signal.addEventListener('abort', () => {
+        cleanup();
+        try { controller.close(); } catch {}
+      }, { once: true });
+
       txIntervalId = setInterval(() => {
-        if (request.signal.aborted) { cleanup(); controller.close(); return; }
         counter += 1;
         const tx = makeCardTransaction(counter);
         controller.enqueue(encoder.encode(`event: transaction\ndata: ${JSON.stringify(tx)}\n\n`));
       }, TX_INTERVAL_MS);
 
       balanceIntervalId = setInterval(() => {
-        if (request.signal.aborted) { cleanup(); controller.close(); return; }
-        // Pick a random card and apply a small delta
         const card = MOCK_CARDS[Math.floor(Math.random() * MOCK_CARDS.length)];
-        const delta = parseFloat((Math.random() * 300 - 80).toFixed(2));
+        const delta = Number.parseFloat((Math.random() * 300 - 80).toFixed(2));
         controller.enqueue(
           encoder.encode(`event: balance_update\ndata: ${JSON.stringify({ cardId: card.id, delta })}\n\n`),
         );
@@ -75,7 +74,7 @@ export async function GET(request: NextRequest) {
 }
 
 function makeCardTransaction(counter: number): Transaction {
-  const amount = parseFloat((Math.random() * 800 - 200).toFixed(2));
+  const amount = Number.parseFloat((Math.random() * 800 - 200).toFixed(2));
   const statuses: Transaction['status'][] = ['pending', 'completed'];
 
   return {
@@ -88,6 +87,6 @@ function makeCardTransaction(counter: number): Transaction {
     date: new Date().toISOString(),
     sender: SENDERS[counter % SENDERS.length],
     recipient: 'Emmanuel Israel',
-    accountNumber: '•••• •••• •••• 7093',
+    accountNumber: '7093',
   };
 }

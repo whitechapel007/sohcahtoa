@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { decodeToken } from '@/lib/auth-tokens';
+import { maskAccount } from '@/lib/api-route-helpers';
 import { TRANSACTIONS } from '@/data/mock/transactions';
 import type { Transaction, TransactionFilters } from '@/types';
 
@@ -23,16 +24,12 @@ export async function getTransactions(
   }
 
   rows.sort((a, b) => {
-    const delta =
-      sort === 'amount' ? a.amount - b.amount :
-      sort === 'status' ? a.status.localeCompare(b.status) :
-      new Date(a.date).getTime() - new Date(b.date).getTime();
+    let delta: number;
+    if (sort === 'amount') delta = a.amount - b.amount;
+    else if (sort === 'status') delta = a.status.localeCompare(b.status);
+    else delta = new Date(a.date).getTime() - new Date(b.date).getTime();
     return order === 'asc' ? delta : -delta;
   });
 
   return rows.slice(0, limit).map(maskAccount);
-}
-
-function maskAccount(t: Transaction): Transaction {
-  return { ...t, accountNumber: '•••• •••• •••• ' + t.accountNumber.slice(-4) };
 }

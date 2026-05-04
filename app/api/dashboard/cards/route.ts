@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { decodeToken } from '@/lib/auth-tokens';
-import { ACCESS_COOKIE } from '@/lib/auth-cookies';
+import { requireAuth } from '@/lib/api-route-helpers';
 import { MOCK_CARDS } from '@/data/mock/cards';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
-  const token = request.cookies.get(ACCESS_COOKIE)?.value;
-  const payload = token ? decodeToken(token) : null;
-  if (!payload || Date.now() > payload.exp) {
-    return NextResponse.json({ code: 'UNAUTHORIZED', message: 'Authentication required.' }, { status: 401 });
-  }
+  const auth = requireAuth(request);
+  if (!auth.ok) return auth.response;
 
   return NextResponse.json(MOCK_CARDS);
 }

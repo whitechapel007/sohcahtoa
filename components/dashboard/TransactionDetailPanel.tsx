@@ -1,6 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useOptimistic, useTransition } from "react";
+import React, {
+  useState,
+  useEffect,
+  useOptimistic,
+  useTransition,
+} from "react";
 import {
   X,
   Flag,
@@ -10,12 +15,10 @@ import {
   User,
   CreditCard,
   Tag,
-  Hash,
   AlertTriangle,
   CheckCircle2,
   Clock,
   XCircle,
-  StickyNote,
   ShieldAlert,
 } from "lucide-react";
 import type { Transaction, UserRole } from "@/types";
@@ -105,32 +108,44 @@ export default function TransactionDetailPanel({
   const [isFlagPending, startFlagTransition] = useTransition();
   const [isNotePending, startNoteTransition] = useTransition();
 
-  const [optimisticTx, addOptimistic] = useOptimistic(
+  // Tracks the last confirmed server state — used for explicit rollback
+  const [lastStableTx, setLastStableTx] = useState(transaction);
+
+  const [optimisticTx, setOptimisticTx] = useOptimistic(
     transaction,
-    (_state: Transaction, update: Transaction) => update,
+    (state: Transaction, update: Partial<Transaction>) => ({ ...state, ...update }),
   );
 
+  // Sync snapshot + reset local UI whenever the open transaction changes
   useEffect(() => {
+    setLastStableTx(transaction);
     setNoteText(transaction.note ?? "");
     setFlagError(null);
     setNoteError(null);
     setNoteSaved(false);
-  }, [transaction.id, transaction.note]);
+  }, [transaction.id, transaction]);
 
   async function handleFlag() {
     if (optimisticTx.status === "flagged") return;
     setFlagError(null);
+
+    const prev = lastStableTx;
+    setOptimisticTx({ status: "flagged" });
+
     startFlagTransition(async () => {
-      addOptimistic({ ...optimisticTx, status: "flagged" });
       try {
         const res = await apiFetchJSON<{ ok: boolean; transaction: Transaction }>(
           `/api/dashboard/transactions/${optimisticTx.id}/flag`,
           { method: "POST" },
         );
+        setLastStableTx(res.transaction);
         onTransactionUpdated(res.transaction);
       } catch (err) {
+        setOptimisticTx(prev);
         setFlagError(
-          err instanceof ApiClientError ? err.message : "Failed to flag transaction.",
+          err instanceof ApiClientError
+            ? err.message
+            : "Failed to flag transaction.",
         );
       }
     });
@@ -139,15 +154,18 @@ export default function TransactionDetailPanel({
   async function handleSaveNote() {
     setNoteError(null);
     setNoteSaved(false);
+
     startNoteTransition(async () => {
       try {
         const res = await apiFetchJSON<{ ok: boolean; transaction: Transaction }>(
           `/api/dashboard/transactions/${optimisticTx.id}/note`,
           { method: "POST", data: { note: noteText } },
         );
+        setLastStableTx(res.transaction);
         onTransactionUpdated(res.transaction);
         setNoteSaved(true);
       } catch (err) {
+        setNoteText(lastStableTx.note ?? "");
         setNoteError(
           err instanceof ApiClientError ? err.message : "Failed to save note.",
         );
@@ -281,10 +299,14 @@ export default function TransactionDetailPanel({
               <button
                 onClick={handleSaveNote}
                 disabled={
-                  isNotePending || noteText === (transaction.note ?? "") || noteText.trim() === ""
+                  isNotePending ||
+                  noteText === (transaction.note ?? "") ||
+                  noteText.trim() === ""
                 }
                 className={`absolute bottom-3 right-3 px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all ${
-                  isNotePending || noteText === (transaction.note ?? "") || noteText.trim() === ""
+                  isNotePending ||
+                  noteText === (transaction.note ?? "") ||
+                  noteText.trim() === ""
                     ? "bg-neutral-100 text-neutral-400 cursor-not-allowed"
                     : "bg-neutral-900 text-white hover:bg-neutral-700 cursor-pointer"
                 }`}
@@ -292,6 +314,9 @@ export default function TransactionDetailPanel({
                 {isNotePending ? "Saving..." : "Update Note"}
               </button>
             </div>
+            {noteError && (
+              <p className="text-[11px] text-negative font-medium">{noteError}</p>
+            )}
           </section>
 
           {/* Audit/Flag Info if applicable */}
@@ -358,7 +383,7 @@ function DetailRow({
   value,
   mono,
 }: {
-  icon: any;
+  icon: React.ElementType;
   label: string;
   value: string;
   mono?: boolean;

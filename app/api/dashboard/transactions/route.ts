@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { decodeToken } from '@/lib/auth-tokens';
-import { ACCESS_COOKIE } from '@/lib/auth-cookies';
+import { requireAuth, apiError, maskAccount } from '@/lib/api-route-helpers';
 import { TRANSACTIONS } from '@/data/mock/transactions';
 import type { Transaction, TransactionStatus, SortField, SortOrder, PaginatedTransactions } from '@/types';
 
@@ -11,11 +10,8 @@ const VALID_STATUSES = new Set<TransactionStatus>(['pending', 'completed', 'flag
 const VALID_SORTS = new Set<SortField>(['date', 'amount', 'status']);
 
 export async function GET(request: NextRequest) {
-  const token = request.cookies.get(ACCESS_COOKIE)?.value;
-  const payload = token ? decodeToken(token) : null;
-  if (!payload || Date.now() > payload.exp) {
-    return error('UNAUTHORIZED', 'Authentication required.', 401);
-  }
+  const auth = requireAuth(request);
+  if (!auth.ok) return auth.response;
 
   const sp = request.nextUrl.searchParams;
 
@@ -29,10 +25,10 @@ export async function GET(request: NextRequest) {
   const order  = (sp.get('order') as SortOrder)  ?? 'desc';
 
   if (status && status !== 'all' && !VALID_STATUSES.has(status)) {
-    return error('INVALID_STATUS', `Unknown status: ${status}`, 400);
+    return apiError('INVALID_STATUS', `Unknown status: ${status}`, 400);
   }
   if (!VALID_SORTS.has(sort)) {
-    return error('INVALID_SORT', `Unknown sort field: ${sort}`, 400);
+    return apiError('INVALID_SORT', `Unknown sort field: ${sort}`, 400);
   }
 
   const dateFrom = sp.get('dateFrom');
@@ -40,8 +36,8 @@ export async function GET(request: NextRequest) {
   const fromMs   = dateFrom ? new Date(dateFrom).getTime() : null;
   const toMs     = dateTo   ? new Date(dateTo).getTime()   : null;
 
-  if (fromMs !== null && Number.isNaN(fromMs)) return error('INVALID_DATE', 'dateFrom is not a valid date.', 400);
-  if (toMs   !== null && Number.isNaN(toMs))   return error('INVALID_DATE', 'dateTo is not a valid date.', 400);
+  if (fromMs !== null && Number.isNaN(fromMs)) return apiError('INVALID_DATE', 'dateFrom is not a valid date.', 400);
+  if (toMs   !== null && Number.isNaN(toMs))   return apiError('INVALID_DATE', 'dateTo is not a valid date.', 400);
 
   const search = sp.get('search')?.toLowerCase().trim() ?? null;
 
@@ -88,10 +84,3 @@ function comparator(a: Transaction, b: Transaction, sort: SortField): number {
   return new Date(a.date).getTime() - new Date(b.date).getTime();
 }
 
-function maskAccount(t: Transaction): Transaction {
-  return { ...t, accountNumber: '•••• •••• •••• ' + t.accountNumber.slice(-4) };
-}
-
-function error(code: string, message: string, status: number) {
-  return NextResponse.json({ code, message }, { status });
-}

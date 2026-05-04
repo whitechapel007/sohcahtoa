@@ -1,25 +1,45 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { decodeToken, createTokens } from '@/lib/auth-tokens';
-import { ACCESS_COOKIE, REFRESH_COOKIE } from '@/lib/auth-cookies';
+import { NextRequest, NextResponse } from "next/server";
+import { decodeToken, createTokens } from "@/lib/auth-tokens";
+import { ACCESS_COOKIE, REFRESH_COOKIE } from "@/lib/auth-cookies";
 
 export async function POST(request: NextRequest) {
   const refreshToken = request.cookies.get(REFRESH_COOKIE)?.value;
   if (!refreshToken) {
-    return error('NO_REFRESH_TOKEN', 'No refresh token present.', 401);
+    return error("NO_REFRESH_TOKEN", "No refresh token present.", 401);
   }
 
   const payload = decodeToken(refreshToken);
-  if (!payload)                   return clearAndError('INVALID_REFRESH_TOKEN', 'Refresh token is invalid.', 401);
-  if (payload.type !== 'refresh') return clearAndError('WRONG_TOKEN_TYPE', 'Token is not a refresh token.', 401);
-  if (Date.now() > payload.exp)   return clearAndError('REFRESH_TOKEN_EXPIRED', 'Refresh token has expired.', 401);
+  if (!payload)
+    return clearAndError(
+      "INVALID_REFRESH_TOKEN",
+      "Refresh token is invalid.",
+      401,
+    );
+  if (payload.type !== "refresh")
+    return clearAndError(
+      "WRONG_TOKEN_TYPE",
+      "Token is not a refresh token.",
+      401,
+    );
+  if (Date.now() > payload.exp)
+    return clearAndError(
+      "REFRESH_TOKEN_EXPIRED",
+      "Refresh token has expired.",
+      401,
+    );
 
-  const tokens = createTokens(payload.sub, payload.role, payload.name);
+  const tokens = createTokens(
+    payload.sub,
+    payload.role,
+    payload.name,
+    payload.email,
+  );
 
   const base = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax' as const,
-    path: '/',
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    path: "/",
   };
 
   const response = NextResponse.json({
@@ -27,8 +47,14 @@ export async function POST(request: NextRequest) {
     expiresIn: tokens.expiresIn,
   });
 
-  response.cookies.set(ACCESS_COOKIE,  tokens.accessToken,  { ...base, maxAge: tokens.expiresIn / 1000 });
-  response.cookies.set(REFRESH_COOKIE, tokens.refreshToken, { ...base, maxAge: 7 * 24 * 60 * 60 });
+  response.cookies.set(ACCESS_COOKIE, tokens.accessToken, {
+    ...base,
+    maxAge: tokens.expiresIn / 1000,
+  });
+  response.cookies.set(REFRESH_COOKIE, tokens.refreshToken, {
+    ...base,
+    maxAge: 7 * 24 * 60 * 60,
+  });
 
   return response;
 }

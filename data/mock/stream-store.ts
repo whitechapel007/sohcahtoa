@@ -1,8 +1,12 @@
 import type { Transaction } from '@/types';
 
+const MAX_SIZE = 500;
 const store = new Map<string, Transaction>();
 
 export function registerStreamTransaction(tx: Transaction) {
+  if (store.size >= MAX_SIZE) {
+    store.delete(store.keys().next().value!); // evict oldest (insertion order)
+  }
   store.set(tx.id, tx);
 }
 
